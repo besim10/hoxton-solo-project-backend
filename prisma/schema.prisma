@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Hospital {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  email       String
+  phoneNumber String
+  address     String
+  admins      Admin[]
+  departments Department[]
+}
+
+model Admin {
+  id         Int      @id @default(autoincrement())
+  fullName   String
+  email      String   @unique
+  password   String
+  avatar     String
+  hospital   Hospital @relation(fields: [hospitalId], references: [id])
+  hospitalId Int
+}
+
+model Department {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique
+  hospital   Hospital  @relation(fields: [hospitalId], references: [id])
+  hospitalId Int
+  rooms      Int
+  doctors    Doctor[]
+  patients   Patient[]
+  nurses     Nurse[]
+}
+
+model Patient {
+  id           Int           @id @default(autoincrement())
+  fullName     String
+  email        String        @unique
+  phoneNumber  String
+  address      String
+  gender       String
+  avatar       String
+  department   Department    @relation(fields: [departmentId], references: [id])
+  departmentId Int
+  appointments Appointment[]
+}
+
+model Nurse {
+  id           Int        @id @default(autoincrement())
+  email        String     @unique
+  fullName     String
+  phoneNumber  String
+  address      String
+  avatar       String
+  employeedAt  String
+  salary       Float
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId Int
+}
+
+model Doctor {
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  fullName     String
+  phoneNumber  String
+  address      String
+  gender       String
+  avatar       String
+  employeedAt  String
+  salary       Float
+  department   Department    @relation(fields: [departmentId], references: [id])
+  departmentId Int
+  appointments Appointment[]
+}
+
+model Appointment {
+  id          Int      @id @default(autoincrement())
+  Patient     Patient  @relation(fields: [patientId], references: [id])
+  patientId   Int
+  doctor      Doctor   @relation(fields: [doctorId], references: [id])
+  doctorId    Int
+  dateAndTime DateTime @default(now())
+  status      String   @default(dbgenerated("pending"))
+  treatment   String
+  payment     Float
+}
