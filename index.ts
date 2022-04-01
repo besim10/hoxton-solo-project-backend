@@ -28,10 +28,14 @@ app.post('/login', async (req,res) => {
     try{
         const admin = await prisma.admin.findUnique({where: {email: email}})
         //@ts-ignore
-        const passwordMatches = bcrypt.compareSync(password, admin.password)
-
-        if(admin && passwordMatches){
-            res.send({admin, token: createToken(admin.id)})
+        if(admin) {
+            const passwordMatches = bcrypt.compareSync(password, admin.password)
+            if(passwordMatches){
+                res.send({admin, token: createToken(admin.id)})
+            }
+            else{
+                throw Error('Email or Password Invalid!')
+            }
         }
         else{
             throw Error('Email or Password Invalid!')
@@ -42,6 +46,46 @@ app.post('/login', async (req,res) => {
     }
 
 })
+app.post('/register', async(req,res) =>{
+    const {fullName, email, password, avatar} = req.body
+
+    try {
+        const hash = bcrypt.hashSync(password)
+        const admin = await prisma.admin.create({data: {fullName, email, password: hash, avatar, hospital: {connect: {name: 'Medica+'}} }})
+        
+        if(admin){
+            res.send({admin, token: createToken(admin.id)})
+        }
+        else{
+            throw Error('Email is already taken!')
+        }
+    } catch (err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+async function getAdminFromToken(token: string) {
+    //@ts-ignore
+    const data = jwt.verify(token, process.env.SECRET_KEY);
+    const admin = await prisma.admin.findUnique({
+      // @ts-ignore
+      where: { id: data.id }
+    });
+  
+    return admin;
+  }
+app.get("/validate", async (req, res) => {
+    const token = req.headers.authorization;
+  
+    try {
+      //@ts-ignore
+      const admin = await getAdminFromToken(token);
+      res.send(admin);
+    } catch (err) {
+      //@ts-ignore
+      res.status(400).send({ error: err.message });
+    }
+  });
 app.listen(PORT, () =>{
     console.log(`Server up and running on http://localhost:${PORT}`)
 })
