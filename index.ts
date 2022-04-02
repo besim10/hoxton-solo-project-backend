@@ -88,7 +88,7 @@ app.get("/validate", async (req, res) => {
   });
 app.get('/doctors', async (req,res) => {
     try{
-        const doctors = await prisma.doctor.findMany()
+        const doctors = await prisma.doctor.findMany({include: {appointments: true, department: true}})
         res.send(doctors)
     }
     catch(err) {
