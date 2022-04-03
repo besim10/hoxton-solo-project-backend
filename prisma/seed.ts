@@ -159,10 +159,9 @@ const patients: Prisma.PatientCreateInput[] = [
         email: "tuan@gmail.com",
         gender: "male",
         phoneNumber: "+3551472583",
-        department: {connect: {name: 'Dentists'}},
         appointments: {create: [
-            {payment: 250.50, treatment: "Acupuncture", doctor:{connect: {email: 'jurgen@gmail.com' }}},
-            {payment: 150.20, treatment: "Ayurveda", doctor:{connect: {email: 'rinor@gmail.com'}}}
+            {doctor:{connect: {email: 'jurgen@gmail.com' }}},
+            {status: 'Completed', payment: 150.20, treatment: "Ayurveda", doctor:{connect: {email: 'rinor@gmail.com'}}}
             ]
         }
     },
@@ -173,10 +172,9 @@ const patients: Prisma.PatientCreateInput[] = [
         email: "palmere@gmail.com",
         gender: "male",
         phoneNumber: "+3558552147",
-        department: {connect: {name: 'Opthalmology'}},
         appointments: {create: [
-            {payment: 450.50, treatment: "Urotherapy", doctor:{connect: {email: 'rinor@gmail.com' }}},
-            {payment: 100, treatment: "Mercury", doctor:{connect: {email: 'arita@gmail.com'}}}
+            {status: 'Completed', payment: 450.50, treatment: "Urotherapy", doctor:{connect: {email: 'rinor@gmail.com' }}},
+            {status: 'Canceled', doctor:{connect: {email: 'arita@gmail.com'}}}
             ]
         }
     },
@@ -187,10 +185,9 @@ const patients: Prisma.PatientCreateInput[] = [
         email: "phoebe@gmail.com",
         gender: "female",
         phoneNumber: "+3551002003",
-        department: {connect: {name: 'Neurology'}},
         appointments: {create: [
-            {payment: 150, treatment: "Homeopathy", doctor:{connect: {email: 'endi@gmail.com' }}},
-            {payment: 70, treatment: "Tobacco Smoke Enemas", doctor:{connect: {email: 'artiola@gmail.com'}}}
+            { status: 'Completed',payment: 150, treatment: "Homeopathy", doctor:{connect: {email: 'endi@gmail.com' }}},
+            {status: 'Canceled', doctor:{connect: {email: 'artiola@gmail.com'}}}
             ]
         }
     }

@@ -31,13 +31,12 @@ model Admin {
 }
 
 model Department {
-  id         Int       @id @default(autoincrement())
-  name       String    @unique
-  hospital   Hospital  @relation(fields: [hospitalId], references: [id])
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  hospital   Hospital @relation(fields: [hospitalId], references: [id])
   hospitalId Int
   rooms      Int
   doctors    Doctor[]
-  patients   Patient[]
   nurses     Nurse[]
 }
 
@@ -49,8 +48,6 @@ model Patient {
   address      String
   gender       String
   avatar       String
-  department   Department    @relation(fields: [departmentId], references: [id])
-  departmentId Int
   appointments Appointment[]
 }
 
@@ -84,12 +81,12 @@ model Doctor {
 
 model Appointment {
   id          Int      @id @default(autoincrement())
-  Patient     Patient  @relation(fields: [patientId], references: [id])
+  patient     Patient  @relation(fields: [patientId], references: [id])
   patientId   Int
   doctor      Doctor   @relation(fields: [doctorId], references: [id])
   doctorId    Int
   dateAndTime DateTime @default(now())
-  status      String   @default(dbgenerated("pending"))
-  treatment   String
-  payment     Float
+  status      String?  @default(dbgenerated("Pending"))
+  treatment   String?
+  payment     Float?
 }

@@ -96,6 +96,36 @@ app.get('/doctors', async (req,res) => {
         res.status(400).send({error: err.message})
     }
 })
+app.get('/nurses', async (req,res) => {
+    try{
+        const nurses = await prisma.nurse.findMany({include: {department:true}})
+        res.send(nurses)
+    }
+    catch(err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+app.get('/patients', async (req,res) => {
+    try{
+        const patients = await prisma.patient.findMany({include: {appointments: true}})
+        res.send(patients)
+    }
+    catch(err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+app.get('/appointments', async (req,res) => {
+    try{
+        const appointments = await prisma.appointment.findMany({include : {patient: true, doctor: true}})
+        res.send(appointments)
+    }
+    catch(err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
 app.listen(PORT, () =>{
     console.log(`Server up and running on http://localhost:${PORT}`)
 })
