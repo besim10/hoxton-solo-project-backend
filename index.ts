@@ -126,6 +126,16 @@ app.get('/appointments', async (req,res) => {
         res.status(400).send({error: err.message})
     }
 })
+app.get('/departments', async (req,res) => {
+    try{
+        const departments = await prisma.department.findMany({include: {doctors: true, nurses: true}})
+        res.send(departments)
+    }
+    catch(err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
 app.listen(PORT, () =>{
     console.log(`Server up and running on http://localhost:${PORT}`)
 })
