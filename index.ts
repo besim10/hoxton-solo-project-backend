@@ -96,6 +96,48 @@ app.get('/doctors', async (req,res) => {
         res.status(400).send({error: err.message})
     }
 })
+app.post('/doctors', async(req,res) => {
+    const {email, fullName, phoneNumber, address, gender, avatar, employeedAt, salary, departmentId} = req.body
+
+
+    try{
+        const matched = await prisma.doctor.findUnique({where: {email}})
+        if(matched){
+            throw Error('Doctor with this email already exists!')
+        }else{
+            const doctor = await prisma.doctor.create({data: {
+                email,
+                fullName,
+                phoneNumber,
+                address,
+                gender,
+                avatar,
+                employeedAt,
+                salary,
+                departmentId
+            }, include: {department: true, appointments: true}})
+            res.send(doctor)
+        }
+    }catch(err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+app.delete('/doctors/:id', async (req,res) =>{
+    const id = Number(req.params.id)
+
+    try{
+        const doctor = await prisma.doctor.findUnique({where: {id}})
+        if(doctor){
+            await prisma.doctor.delete({where: {id}})
+            res.send({message: 'Doctor succesfully deleted!'})
+        }
+    }
+    catch(err){
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
 app.get('/nurses', async (req,res) => {
     try{
         const nurses = await prisma.nurse.findMany({include: {department:true}})
