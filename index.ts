@@ -168,6 +168,74 @@ app.get('/appointments', async (req,res) => {
         res.status(400).send({error: err.message})
     }
 })
+app.post('/appointments', async (req, res) => {
+    const {patientId, doctorId} = req.body
+
+    try {
+        const appointment = await prisma.appointment.create({data: {patientId, doctorId},include: {doctor: true,patient: true}})
+        
+        res.send(appointment)
+        
+    } catch (err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+app.patch('/appointments/:id', async (req, res) => {
+
+    const id = Number(req.params.id)
+
+    const {status, treatment, payment } = req.body
+
+    try {
+        const updatedAppointment = await prisma.appointment.update({where: {id: id},data: {payment: payment, status: status, treatment: treatment}})
+        
+        res.send(updatedAppointment)
+        
+    } catch (err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+app.delete('/appointments/:id', async (req,res) => {
+    const id = Number(req.params.id)
+    try {
+        const appointment = await prisma.appointment.findUnique({where: {id : id}})
+
+        if(appointment){
+            const appointment = await prisma.appointment.delete({where: {id: id}})
+            res.send({msg: 'Appointmentent deleted succesfully'})
+        }
+        else{
+            throw Error('Appointment with this Id doesnt exists!')
+        }
+    } catch (err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+app.post('/appointmentWithNewPatient', async (req,res) => {
+    const {fullName, email, phoneNumber, address, gender, avatar, doctorId} = req.body
+
+    try{
+        const patient = await prisma.patient.findUnique({where: {email}})
+        if(patient){
+            throw Error('Patient already exists!')
+        }
+        else{
+            const patient =  await prisma.patient.create({data:{fullName, email, phoneNumber, address, gender, avatar}})
+
+            const appointment = await prisma.appointment.create({data: {patientId: patient.id, doctorId}, include: {doctor: true, patient: true}})
+
+            const patientWithAppointments = await prisma.patient.findUnique({where: {id: patient.id},include: {appointments: true}})
+            res.send({appointment: appointment, patient: patientWithAppointments})
+        }
+    }
+    catch(err){
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
 app.get('/departments', async (req,res) => {
     try{
         const departments = await prisma.department.findMany({include: {doctors: true, nurses: true}})

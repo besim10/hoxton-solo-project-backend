@@ -80,13 +80,13 @@ model Doctor {
 }
 
 model Appointment {
-  id          Int      @id @default(autoincrement())
-  patient     Patient  @relation(fields: [patientId], references: [id])
+  id          Int       @id @default(autoincrement())
+  patient     Patient   @relation(fields: [patientId], references: [id])
   patientId   Int
-  doctor      Doctor   @relation(fields: [doctorId], references: [id])
+  doctor      Doctor    @relation(fields: [doctorId], references: [id])
   doctorId    Int
-  dateAndTime DateTime @default(now())
-  status      String?  @default(dbgenerated("Pending"))
+  dateAndTime DateTime? @default(now())
+  status      String?   @default(dbgenerated("Pending"))
   treatment   String?
   payment     Float?
 }
