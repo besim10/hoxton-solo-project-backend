@@ -123,6 +123,22 @@ app.post('/doctors', async(req,res) => {
         res.status(400).send({error: err.message})
     }
 })
+app.get('/doctors/:id', async(req,res) =>{
+    const id = Number(req.params.id)
+
+    try {
+        const doctor = await prisma.doctor.findUnique({where: {id},include: {appointments: true, department: true}})
+        if(doctor){
+            res.send(doctor)
+        }
+        else{
+            throw Error('Doctor with this Id doesnt exists!')
+        }
+    } catch (err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
 app.delete('/doctors/:id', async (req,res) =>{
     const id = Number(req.params.id)
 
@@ -138,6 +154,21 @@ app.delete('/doctors/:id', async (req,res) =>{
         res.status(400).send({error: err.message})
     }
 })
+app.patch('/doctors/:id', async (req, res) => {
+
+    const id = Number(req.params.id)
+
+    const {fullName, email, phoneNumber, address, gender, avatar, salary, departmentId} = req.body
+
+    try {
+        const updatedDoctor = await prisma.doctor.update({where: {id: id},data: {fullName, email, phoneNumber, address, gender, avatar, salary, departmentId },include:{appointments:true,department:true}})
+        res.send(updatedDoctor)
+        
+    } catch (err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
 app.get('/nurses', async (req,res) => {
     try{
         const nurses = await prisma.nurse.findMany({include: {department:true}})
@@ -148,12 +179,92 @@ app.get('/nurses', async (req,res) => {
         res.status(400).send({error: err.message})
     }
 })
+app.post('/nurses', async(req,res) => {
+    const {email, fullName, phoneNumber, address, avatar, employeedAt, salary, departmentId} = req.body
+
+
+    try{
+        const matched = await prisma.doctor.findUnique({where: {email}})
+        if(matched){
+            throw Error('Nurse with this email already exists!')
+        }else{
+            const nurse = await prisma.nurse.create({data: {
+                email,
+                fullName,
+                phoneNumber,
+                address,
+                avatar,
+                employeedAt,
+                salary,
+                departmentId
+            }, include: {department: true}})
+            res.send(nurse)
+        }
+    }catch(err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+app.delete('/nurses/:id', async (req,res) =>{
+    const id = Number(req.params.id)
+
+    try{
+        const nurse = await prisma.nurse.findUnique({where: {id}})
+        if(nurse){
+            await prisma.nurse.delete({where: {id}})
+            res.send({message: 'Nurse succesfully deleted!'})
+        }
+    }
+    catch(err){
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
 app.get('/patients', async (req,res) => {
     try{
         const patients = await prisma.patient.findMany({include: {appointments: true}})
         res.send(patients)
     }
     catch(err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+app.post('/patients', async(req,res) => {
+    const {email, fullName, phoneNumber, address, gender, avatar} = req.body
+
+
+    try{
+        const matched = await prisma.patient.findUnique({where: {email}})
+        if(matched){
+            throw Error('Patient with this email already exists!')
+        }else{
+            const patient = await prisma.patient.create({data: {
+                email,
+                fullName,
+                phoneNumber,
+                address,
+                avatar,
+                gender,
+            }, include: {appointments: true}})
+            res.send(patient)
+        }
+    }catch(err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+app.delete('/patients/:id', async (req,res) =>{
+    const id = Number(req.params.id)
+
+    try{
+        const patient = await prisma.patient.findUnique({where: {id}})
+        if(patient){
+            await prisma.patient.delete({where: {id}})
+            res.send({message: 'Patient succesfully deleted!'})
+        }
+    }
+    catch(err){
         //@ts-ignore
         res.status(400).send({error: err.message})
     }
