@@ -49,7 +49,7 @@ const doctors: Prisma.DoctorCreateInput[] = [
         employeedAt: '12/05/2004',
         gender: 'male',
         phoneNumber: '+3552542542',
-        salary: 2.142,
+        salary: 2142,
         department: {connect: {name: 'Dentists'}}
     },
     {
@@ -60,7 +60,7 @@ const doctors: Prisma.DoctorCreateInput[] = [
         employeedAt: '05/10/2008',
         gender: 'female',
         phoneNumber: '+3551425625',
-        salary: 3.600,
+        salary: 3600,
         department: {connect: {name: 'Neurology'}}
     },
     {
@@ -71,7 +71,7 @@ const doctors: Prisma.DoctorCreateInput[] = [
         employeedAt: '02/07/2008',
         gender: 'male',
         phoneNumber: '+35566228874',
-        salary: 1.800,
+        salary: 1800,
         department: {connect: {name: 'Neurology'}}
     },
     {
@@ -82,7 +82,7 @@ const doctors: Prisma.DoctorCreateInput[] = [
         employeedAt: '11/02/2010',
         gender: 'male',
         phoneNumber: '+3551414142',
-        salary: 3.470,
+        salary: 3470,
         department: {connect: {name: 'Opthalmology'}}
     },
     {
@@ -93,7 +93,7 @@ const doctors: Prisma.DoctorCreateInput[] = [
         employeedAt: '04/08/2014',
         gender: 'female',
         phoneNumber: '+3552266954',
-        salary: 4.500,
+        salary: 4500,
         department: {connect: {name: 'Cancer Department'}}
     },
     {
@@ -104,7 +104,7 @@ const doctors: Prisma.DoctorCreateInput[] = [
         employeedAt: '02/04/2000',
         gender: 'male',
         phoneNumber: '+3514425620',
-        salary: 6.142,
+        salary: 6142,
         department: {connect: {name: 'ENT Department'}}
     },
     {
@@ -127,7 +127,7 @@ const nurses: Prisma.NurseCreateInput[] = [
         email: 'albulena@gmail.com',
         phoneNumber: '+383491144225',
         employeedAt: '04/02/2004',
-        salary: 4.250,
+        salary: 4250,
         department: {connect: {name: 'ENT Department'}}
     },
     {
@@ -137,7 +137,7 @@ const nurses: Prisma.NurseCreateInput[] = [
         email: 'desintila@gmail.com',
         phoneNumber: '+3551466258',
         employeedAt: '04/08/2004',
-        salary: 3.250,
+        salary: 3250,
         department: {connect: {name: 'Dentists'}}
     },
     {
@@ -147,7 +147,7 @@ const nurses: Prisma.NurseCreateInput[] = [
         email: 'foriana@gmail.com',
         phoneNumber: '+383493654524',
         employeedAt: '07/10/2018',
-        salary: 2.250,
+        salary: 2250,
         department: {connect: {name: 'Opthalmology'}}
     }
 ]
@@ -160,8 +160,8 @@ const patients: Prisma.PatientCreateInput[] = [
         gender: "male",
         phoneNumber: "+3551472583",
         appointments: {create: [
+            {status: 'Completed', payment: 150, treatment: "Ayurveda", doctor:{connect: {email: 'rinor@gmail.com'}}},
             {doctor:{connect: {email: 'jurgen@gmail.com' }}},
-            {status: 'Completed', payment: 150.20, treatment: "Ayurveda", doctor:{connect: {email: 'rinor@gmail.com'}}}
             ]
         }
     },
@@ -173,7 +173,7 @@ const patients: Prisma.PatientCreateInput[] = [
         gender: "male",
         phoneNumber: "+3558552147",
         appointments: {create: [
-            {status: 'Completed', payment: 450.50, treatment: "Urotherapy", doctor:{connect: {email: 'rinor@gmail.com' }}},
+            {status: 'Completed', payment: 450, treatment: "Urotherapy", doctor:{connect: {email: 'rinor@gmail.com' }}},
             {status: 'Canceled', doctor:{connect: {email: 'arita@gmail.com'}}}
             ]
         }

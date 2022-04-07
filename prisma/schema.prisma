@@ -59,7 +59,7 @@ model Nurse {
   address      String
   avatar       String
   employeedAt  String
-  salary       Float
+  salary       Int
   department   Department @relation(fields: [departmentId], references: [id])
   departmentId Int
 }
@@ -73,7 +73,7 @@ model Doctor {
   gender       String
   avatar       String
   employeedAt  String
-  salary       Float
+  salary       Int
   department   Department    @relation(fields: [departmentId], references: [id])
   departmentId Int
   appointments Appointment[]
@@ -88,5 +88,5 @@ model Appointment {
   dateAndTime DateTime? @default(now())
   status      String?   @default(dbgenerated("Pending"))
   treatment   String?
-  payment     Float?
+  payment     Int?
 }
