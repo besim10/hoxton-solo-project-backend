@@ -179,6 +179,22 @@ app.get('/nurses', async (req,res) => {
         res.status(400).send({error: err.message})
     }
 })
+app.get('/nurses/:id', async(req,res) =>{
+    const id = Number(req.params.id)
+
+    try {
+        const nurse = await prisma.nurse.findUnique({where: {id},include: {department: true}})
+        if(nurse){
+            res.send(nurse)
+        }
+        else{
+            throw Error('Nurse with this Id doesnt exists!')
+        }
+    } catch (err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
 app.post('/nurses', async(req,res) => {
     const {email, fullName, phoneNumber, address, avatar, employeedAt, salary, departmentId} = req.body
 
@@ -220,12 +236,43 @@ app.delete('/nurses/:id', async (req,res) =>{
         res.status(400).send({error: err.message})
     }
 })
+app.patch('/nurses/:id', async (req, res) => {
+
+    const id = Number(req.params.id)
+
+    const {fullName, email, phoneNumber, address, avatar, salary, departmentId} = req.body
+
+    try {
+        const updatedNurse = await prisma.nurse.update({where: {id: id},data: {fullName, email, phoneNumber, address, avatar, salary, departmentId },include:{department:true}})
+        res.send(updatedNurse)
+        
+    } catch (err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
 app.get('/patients', async (req,res) => {
     try{
         const patients = await prisma.patient.findMany({include: {appointments: true}})
         res.send(patients)
     }
     catch(err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+app.get('/patients/:id', async(req,res) =>{
+    const id = Number(req.params.id)
+
+    try {
+        const patient = await prisma.patient.findUnique({where: {id},include: {appointments: true}})
+        if(patient){
+            res.send(patient)
+        }
+        else{
+            throw Error('Patient with this Id doesnt exists!')
+        }
+    } catch (err) {
         //@ts-ignore
         res.status(400).send({error: err.message})
     }
@@ -254,6 +301,21 @@ app.post('/patients', async(req,res) => {
         res.status(400).send({error: err.message})
     }
 })
+app.patch('/patients/:id', async (req, res) => {
+
+    const id = Number(req.params.id)
+
+    const {fullName, email, phoneNumber, address,gender, avatar} = req.body
+
+    try {
+        const updatedPatient = await prisma.patient.update({where: {id: id},data: {fullName, email, phoneNumber, address, gender, avatar },include:{appointments: true}})
+        res.send(updatedPatient)
+        
+    } catch (err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
 app.delete('/patients/:id', async (req,res) =>{
     const id = Number(req.params.id)
 
@@ -275,6 +337,37 @@ app.get('/appointments', async (req,res) => {
         res.send(appointments)
     }
     catch(err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+app.get('/appointments/:id', async(req,res) =>{
+    const id = Number(req.params.id)
+
+    try {
+        const appointment = await prisma.appointment.findUnique({where: {id},include: {doctor: true, patient: true}})
+        if(appointment){
+            res.send(appointment)
+        }
+        else{
+            throw Error('Appointment with this Id doesnt exists!')
+        }
+    } catch (err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+app.patch('/appointments/:id', async (req, res) => {
+
+    const id = Number(req.params.id)
+
+    const {treatment, payment} = req.body
+
+    try {
+        const updatedAppointment = await prisma.appointment.update({where: {id: id},data: {treatment, payment},include:{doctor: true, patient: true}})
+        res.send(updatedAppointment)
+        
+    } catch (err) {
         //@ts-ignore
         res.status(400).send({error: err.message})
     }
@@ -353,6 +446,57 @@ app.get('/departments', async (req,res) => {
         res.send(departments)
     }
     catch(err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+app.get('/departments/:id', async(req,res) =>{
+    const id = Number(req.params.id)
+
+    try {
+        const department = await prisma.department.findUnique({where: {id},include: {doctors: true, nurses: true}})
+        if(department){
+            res.send(department)
+        }
+        else{
+            throw Error('Department with this Id doesnt exists!')
+        }
+    } catch (err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+app.post('/departments', async(req,res) => {
+    const {name, rooms, hospitalId} = req.body
+
+
+    try{
+        const matched = await prisma.department.findUnique({where: {name}})
+        if(matched){
+            throw Error('Department with this name already exists!')
+        }else{
+            const department = await prisma.department.create({data: {
+                name, rooms, hospitalId
+            }, include: {doctors: true, nurses: true}})
+            res.send(department)
+        }
+    }catch(err) {
+        //@ts-ignore
+        res.status(400).send({error: err.message})
+    }
+})
+app.patch('/departments/:id', async (req, res) => {
+
+    const id = Number(req.params.id)
+
+    const {name, rooms } = req.body
+
+    try {
+        const updatedDepartment = await prisma.department.update({where: {id: id},data: {name, rooms}, include:{doctors: true, nurses: true}})
+        
+        res.send(updatedDepartment)
+        
+    } catch (err) {
         //@ts-ignore
         res.status(400).send({error: err.message})
     }
